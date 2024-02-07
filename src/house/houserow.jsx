@@ -10,12 +10,15 @@ const HouseRow = ({house, onRemoveItem }) => (
      <td>{house.address}</td>
      <td>{house.country}</td>
      <td>{currencyFormatter.format(house.price)}</td>
+     <td>
      <span>
       <button type="button" onClick={() => onRemoveItem(house)}>
         Delete
       </button>
     </span>
-  </tr>
+     </td>
+    </tr>
+  
 );
   
 export default HouseRow;

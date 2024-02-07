@@ -152,18 +152,52 @@ const initialHouses = [
     },
   ];
 
-const useStorageState = (key, initialState) => {
-    const [value, setValue] = React.useState(
-      localStorage.getItem(key) || initialState
-    );
-  
-    React.useEffect(() => {
-      localStorage.setItem(key, value);
-    }, [value, key]);
-  
-    return [value, setValue];
-  };  
+    /* Fetching data. We start off with a function that returns a 
+     promise with data in its shorthand version once it resolves. 
+     Even though the data should arrive asynchronously when we start the 
+     application, it appears to arrive synchronously, because it's rendered 
+     immediately. Let's change this by giving it a bit of a realistic delay.
+     When resolving the promise, delay it for 2 seconds:
+   */
+     const getAsyncHouses = () =>
+       new Promise((resolve) =>
+       setTimeout(
+         () => resolve({ data: { houses: initialHouses } }),
+         2000
+       )
+     );
 
+  /* The following  is a custom hook that will store the state in a 
+     local storage. useStorageState which will keep the component's 
+     state in sync with the browser's local storage.
+
+    This custom hook returns
+      1. state 
+      2. and a state updater function
+    and accepts an initial state as argument. 
+
+     This is the custom hook before it was refactored to make it generic:
+     const [searchTerm, setSearchTerm] = React.useState(''); 
+        1. searchTerm renamed to 'value'
+        2. setSearchTerm renamed to 'setValue'
+  */
+    const useStorageState = (key, initialState) => {
+      const [value, setValue] = React.useState(
+          localStorage.getItem('key') || initialState 
+      );
+      
+      React.useEffect(() => {
+        console.log('useEffect fired. Displaying value of dependency array ' + [ value, key]  );
+          localStorage.setItem(key, value);  
+          },
+          [value, key]   //Dependency array
+          ); //EOF useEffect
+      
+      //the returned values are returned as an array.
+      return [value, setValue]; 
+  
+    } //EOF create custom hook
+     
 const App = () => {
 
    const welcome = {
@@ -171,70 +205,72 @@ const App = () => {
      title: 'Houses for Sale',
    };
  
-   //1. Stuff related Search component state
-   const [stateOfSearchComponent, setSearchTerm] = useStorageState(
-    'search',
-    'USA'
-  );
+  /* Call custom useStorageState hook to assign value to searchTerm, 
+     setSearchTerm */
+  const [stateOfSearchComponent, setSearchTerm] =  useStorageState (
+    'search', //key
+    'Italy',  //Initial state
+    );
+  console.log('Value assigned to search term is = ' + stateOfSearchComponent); 
+  console.log('Value assigned tosetSearchTerm is = ' + setSearchTerm); 
 
-  //2. Stuff related Search component state
-  //We'll use React's useEffect Hook to trigger the desired 
-  //side-effect each time the stateOfSearchComponent changes.
-  //The DESIRED side-effect is to store the state it in the localstorage
-  React.useEffect(() => {
-      localStorage.setItem('search', stateOfSearchComponent);
-    }, [stateOfSearchComponent]);
+  /* Step 1: Since we haven't fetch the data yet, initialized the 
+    state with empty array and simulate fetching these stories async. */
+    const [houses, setHouses] = React.useState([]);
+
+  /*Step 2: Add a new useEffect and call the function and resolve the
+   returned promise */
+    React.useEffect(() => {
+      //remember the first parameter to useEffect is a function
+      getAsyncHouses().then(result => {
+         setHouses(result.data.houses);
+      });
+    }, []); //remember second parameter is a dependency array
    
-  //3. Stuff related Search component state
-  const searchHandler = (event) => {
-    setSearchTerm(event.target.value); //tell the state updater function  to update the stateOfSearchComponent.
-       localStorage.setItem('search', event.target.value);
-    
-     console.log('B - Value of data passed to parent component named App via ' +
-         'Callback Handler is = ' + event.target.value);
-      };
+  /* Next we write event handler which removes an item from HouseList
+      Select the record from the state called 'houses' based on the filter
+      Here, the JavaScript array's built-in filter method creates
+      a new filtered array called 'house'.
 
-   //4. Stuff related Search component state
-   //   Select the record from the list based on the filter.
-   //Here, the JavaScript array's built-in filter method is used 
-   //to create a new filtered array. The filter() method takes a function 
-   //as an argument, which accesses each item in the array and returns /
-   //true or false. If the function returns true, meaning the condition is 
-   //met, the item stays in the newly created array; if the function 
-   //returns false, it's removed from the filtered array.
-   const searchedHouses = initialHouses.filter((house) =>
-      house.country.toLowerCase().includes(stateOfSearchComponent.toLowerCase()) 
-     );  
+      The filter() method takes a function as an argument, 
+    which accesses each item in the array and returns /
+    true or false. If the function returns true, meaning the condition is 
+    met, the item stays in the newly created array; if the function 
+    returns false, it's removed from the filtered array.
 
-    //1. Stuff related to enabling deleting record from the "initialHouses"
-    //Next make the array "initialHouses" stateful so that we can delete stuff
-    //To gain control over the list "initialHouses", make it stateful 
-    //by using it as initial state in React's useState Hook. The 
-    //returned values from the array are the:
-    //    1. current state (houses) 
-    //    2. and the state updater function (setStories):
-
-    const [houses, setHouses] = React.useState(initialHouses);
-  
-    //2. Handler for the deleting record. It is used in the HouseRow component.
-    //components
-    //The argument to this handler is "item" to be deleted. This handler
-    //returns "newHouses" are then set as new state.
-    const handleRemoveHouse = (item) => {
-      const newHouses = houses.filter(
-        (house) => item.objectID !== house.objectID
+      Pass this handler to List component when instantiating the component
+    */
+      const handleRemoveHouse = (item) => { 
+        const newHouses = houses.filter(   
+         (house) => item.objectID !== house.objectID
       );
-      setHouses(newHouses);   //Set "newHouses" as new state
-      const myNewHouses = JSON.stringify(newHouses);
-      console.log("The newHouses state is = " + myNewHouses );
+      //updater function updates the stateful variable 
+      //called 'stories'. Since the state has changed
+      //(e.g an item was deleted), the App, List, Item
+      //components will re-render
+      setHouses(newHouses);
+    }
+  
+    const handleSearch = (event) => {
+      setSearchTerm(event.target.value); 
     };
+
+    const searchedHouses = houses.filter((house) =>
+      house.country.toLowerCase().includes(stateOfSearchComponent.toLowerCase())
+  );
 
   return (
     <>
      <Header  headerText={welcome} />   
 
-     <Search searchState={stateOfSearchComponent} onSearchHandler={searchHandler}/>  
-      
+     <Search 
+       id="search"
+       value={stateOfSearchComponent}
+       isFocused //pass imperatively a dedicated  prop. isFocused as an attribute is equivalent to isFocused={true}
+       onInputChange={handleSearch}
+      >
+       <strong>Search with 2 sec delay:</strong>
+      </Search>
      <hr/>
      <HouseList list={searchedHouses} onRemoveItem={handleRemoveHouse}/> 
     </>
