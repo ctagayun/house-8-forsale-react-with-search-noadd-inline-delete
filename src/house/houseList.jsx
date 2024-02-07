@@ -30,8 +30,10 @@ import HouseRow from './houserow';
 
 //The child component receives a parameer ('props') as object
 const HouseList = ({list, onRemoveItem}) => {
- 
+const mySearchHouses = JSON.stringify(list.searchedHouses);
+console.log("SearchedHouses = " + mySearchHouses );
  return (
+    
     <>
       <div className="row mb-2">
         <h5 className="themeFontColor text-center">
@@ -48,21 +50,19 @@ const HouseList = ({list, onRemoveItem}) => {
           </tr>
         </thead>
         <tbody>
-          {list.map((record) => ( //first time in list has already been populated by useState
+          {list.map((record) => ( 
+            //first time in list has already been populated by useState
             //Instantiate the HouseRow component and pass each record
             //to HouseRow component as props. Pass the delete record 
             //handler "onRemoveItem" to HouseRow component.
             <HouseRow 
-                key={record.id} 
+                key={record.key} 
                 house={record}
-                onRemoveItem = {onRemoveItem} //contains the onRemoveItem hadler
+                onRemoveItem = {onRemoveItem} //contains the onRemoveItem handler
             />
           ))}
         </tbody>
       </table>
-      {/* <button className="btn btn-primary" onClick={addHouse} >
-        Add House
-      </button> */}
     </>
   );
 };

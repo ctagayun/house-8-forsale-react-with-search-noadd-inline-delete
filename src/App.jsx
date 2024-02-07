@@ -118,7 +118,7 @@ import Header from "./header";
 import HouseList from './house/houseList';
 import Search from './house/search';
 
-   //Will move the houseArray from global scope into App Component
+//Will move the houseArray from global scope into App Component
 const initialHouses = [
     {
       id: 1,
@@ -205,9 +205,9 @@ const App = () => {
      title: 'Houses for Sale',
    };
  
-  /* Call custom useStorageState hook to assign value to searchTerm, 
-     setSearchTerm */
-  const [stateOfSearchComponent, setSearchTerm] =  useStorageState (
+  /* Call custom useStorageState hook to assign value to stateOfSearchComponent, 
+  setSearchTerm */
+  const [stateOfSearchComponent, setSearchTerm] =  useStorageState ( //<-- custom hook
     'search', //key
     'Italy',  //Initial state
     );
@@ -220,7 +220,7 @@ const App = () => {
 
   /*Step 2: Add a new useEffect and call the function and resolve the
    returned promise */
-    React.useEffect(() => {
+  React.useEffect(() => {
       //remember the first parameter to useEffect is a function
       getAsyncHouses().then(result => {
          setHouses(result.data.houses);
@@ -240,7 +240,7 @@ const App = () => {
 
       Pass this handler to List component when instantiating the component
     */
-      const handleRemoveHouse = (item) => { 
+    const handleRemoveHouse = (item) => { 
         const newHouses = houses.filter(   
          (house) => item.objectID !== house.objectID
       );
@@ -257,7 +257,10 @@ const App = () => {
 
     const searchedHouses = houses.filter((house) =>
       house.country.toLowerCase().includes(stateOfSearchComponent.toLowerCase())
-  );
+     );
+    
+    
+    
 
   return (
     <>
@@ -270,11 +273,14 @@ const App = () => {
        onInputChange={handleSearch}
       >
        <strong>Search with 2 sec delay:</strong>
+       
       </Search>
+
      <hr/>
-     <HouseList list={searchedHouses} onRemoveItem={handleRemoveHouse}/> 
+      
+     <HouseList list={searchedHouses} onRemoveItem={handleRemoveHouse}/>  
     </>
-  )
+ )
 }
 
 export default App
