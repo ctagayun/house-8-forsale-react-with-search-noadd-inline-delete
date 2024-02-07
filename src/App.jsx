@@ -112,23 +112,14 @@ which allows its users to remove the item from the list.
     following command
        npm install vite-plugin-eslint --save-dev
     */
-
-
 import * as React from 'react';
 import './App.css'
 import Header from "./header";
 import HouseList from './house/houseList';
 import Search from './house/search';
 
-const App = () => {
-
-   const welcome = {
-     subject: 'List of ',
-     title: 'Houses for Sale',
-   };
-
    //Will move the houseArray from global scope into App Component
-   const initialHouses = [
+const initialHouses = [
     {
       id: 1,
       address: "12 Valley of Kings, Geneva",
@@ -160,10 +151,31 @@ const App = () => {
       price: 700900,
     },
   ];
+
+const useStorageState = (key, initialState) => {
+    const [value, setValue] = React.useState(
+      localStorage.getItem(key) || initialState
+    );
+  
+    React.useEffect(() => {
+      localStorage.setItem(key, value);
+    }, [value, key]);
+  
+    return [value, setValue];
+  };  
+
+const App = () => {
+
+   const welcome = {
+     subject: 'List of ',
+     title: 'Houses for Sale',
+   };
  
-  //1. Stuff related Search component state
-  const [stateOfSearchComponent, setSearchTerm] = React.useState(
-    localStorage.getItem('search') || 'Italy');
+   //1. Stuff related Search component state
+   const [stateOfSearchComponent, setSearchTerm] = useStorageState(
+    'search',
+    'USA'
+  );
 
   //2. Stuff related Search component state
   //We'll use React's useEffect Hook to trigger the desired 
@@ -182,37 +194,46 @@ const App = () => {
          'Callback Handler is = ' + event.target.value);
       };
 
-   //Add this function to filter the housearray before it is passed to
-   //HouseList component
-  
-   //select the record from the list based on the filter
+   //4. Stuff related Search component state
+   //   Select the record from the list based on the filter.
    //Here, the JavaScript array's built-in filter method is used 
    //to create a new filtered array. The filter() method takes a function 
    //as an argument, which accesses each item in the array and returns /
    //true or false. If the function returns true, meaning the condition is 
    //met, the item stays in the newly created array; if the function 
    //returns false, it's removed from the filtered array.
-
    const searchedHouses = initialHouses.filter((house) =>
-      //convert  to lowercase the filtered copy of HouseArray called "house" 
       house.country.toLowerCase().includes(stateOfSearchComponent.toLowerCase()) 
      );  
 
+    //1. Stuff related to enabling deleting record from the "initialHouses"
+    //Next make the array "initialHouses" stateful so that we can delete stuff
+    //To gain control over the list "initialHouses", make it stateful 
+    //by using it as initial state in React's useState Hook. The 
+    //returned values from the array are the:
+    //    1. current state (houses) 
+    //    2. and the state updater function (setStories):
+
     const [houses, setHouses] = React.useState(initialHouses);
   
-    //The argument to this handler is item to be deleted
+    //2. Handler for the deleting record. It is used in the HouseRow component.
+    //components
+    //The argument to this handler is "item" to be deleted. This handler
+    //returns "newHouses" are then set as new state.
     const handleRemoveHouse = (item) => {
       const newHouses = houses.filter(
         (house) => item.objectID !== house.objectID
       );
-      setHouses(newHouses);
+      setHouses(newHouses);   //Set "newHouses" as new state
+      const myNewHouses = JSON.stringify(newHouses);
+      console.log("The newHouses state is = " + myNewHouses );
     };
 
   return (
     <>
      <Header  headerText={welcome} />   
 
-     <Search searchState={stateOfSearchComponent} onSearch={searchHandler}/>  
+     <Search searchState={stateOfSearchComponent} onSearchHandler={searchHandler}/>  
       
      <hr/>
      <HouseList list={searchedHouses} onRemoveItem={handleRemoveHouse}/> 

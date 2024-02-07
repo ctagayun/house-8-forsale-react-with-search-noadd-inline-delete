@@ -39,9 +39,9 @@ import HouseRow from './houserow';
     <div className="float-start ">
         <label htmlFor="search">Search:</label>
         <input id="search" 
-          value={props.searchState}
-          type="text"
-          onChange={props.onSearch}/> 
+        value={props.searchState}
+        type="text"
+        onChange={props.onSearchHandler}/> 
         <p> 
           Searching for <strong>{props.search}</strong>
          </p>

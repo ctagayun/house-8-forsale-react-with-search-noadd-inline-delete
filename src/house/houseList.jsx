@@ -50,13 +50,12 @@ const HouseList = ({list, onRemoveItem}) => {
         <tbody>
           {list.map((record) => ( //first time in list has already been populated by useState
             //Instantiate the HouseRow component and pass each record
-            //to HouseRow component as props.
-            //house={record} means access of the "record"  and 
-            //assign it to variable "house"
+            //to HouseRow component as props. Pass the delete record 
+            //handler "onRemoveItem" to HouseRow component.
             <HouseRow 
                 key={record.id} 
                 house={record}
-                onRemoveItem = {onRemoveItem}
+                onRemoveItem = {onRemoveItem} //contains the onRemoveItem hadler
             />
           ))}
         </tbody>
