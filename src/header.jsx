@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */ 
 import { logo } from "./header.module.css";
 
 const subtitleStyle = {

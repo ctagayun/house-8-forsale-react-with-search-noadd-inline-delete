@@ -26,7 +26,7 @@ const HouseRow = ({house, onRemoveItem }) => (
      <td>{currencyFormatter.format(house.price)}</td>
      <td>
      <span>
-      <button type="button" onClick={() => onRemoveItem(house)}>
+      <button className="btn btn-primary" type="button" onClick={() => onRemoveItem(house)}>
         Delete
       </button>
     </span>

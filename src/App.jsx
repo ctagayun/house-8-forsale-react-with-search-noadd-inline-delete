@@ -291,11 +291,8 @@ const App = () => {
        onInputChange={handleSearch}
       >
        <strong>Search with 2 sec delay:</strong>
-       
       </Search>
-
-     <hr/>
-      
+      <br></br>
      <HouseList list={searchedHouses} onRemoveHouse={handleRemoveHouse} />  
     </>
  )

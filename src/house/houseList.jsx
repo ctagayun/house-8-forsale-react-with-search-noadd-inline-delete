@@ -33,8 +33,20 @@ const HouseList = ({list, onRemoveHouse}) => {
 
 const mySearchHouses = JSON.stringify(list.searchedHouses);
 console.log("SearchedHouses = " + mySearchHouses );
+
+ const addHouse = () => {
+   setHouses([
+     ...houses, //state
+      {
+        objectID: 9,
+        address: "1456 Riverside Road",
+        country: "USA",
+        price: 25000000
+      },
+   ]);
+ };
+
  return (
-    
     <>
       <div className="row mb-2">
         <h5 className="themeFontColor text-center">
@@ -64,6 +76,9 @@ console.log("SearchedHouses = " + mySearchHouses );
           ))}
         </tbody>
       </table>
+      <button className="btn btn-primary" onClick={addHouse}>
+        Add
+      </button>
     </>
   );
 };
