@@ -29,7 +29,8 @@ import * as React from 'react';
 import HouseRow from './houserow';
 
 //The child component receives a parameer ('props') as object
-const HouseList = ({list, onRemoveItem}) => {
+const HouseList = ({list, onRemoveHouse}) => {
+
 const mySearchHouses = JSON.stringify(list.searchedHouses);
 console.log("SearchedHouses = " + mySearchHouses );
  return (
@@ -56,9 +57,9 @@ console.log("SearchedHouses = " + mySearchHouses );
             //to HouseRow component as props. Pass the delete record 
             //handler "onRemoveItem" to HouseRow component.
             <HouseRow 
-                objectid={record.objectID} 
+                objectID={record.objectID} 
                 house={record}
-                onRemoveItem = {onRemoveItem} //contains the onRemoveItem handler
+                onRemoveItem = {onRemoveHouse} //contains the onRemoveItem handler
             />
           ))}
         </tbody>

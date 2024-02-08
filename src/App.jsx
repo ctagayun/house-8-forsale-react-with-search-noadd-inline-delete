@@ -260,6 +260,17 @@ const App = () => {
       setHouses(newHouses);
     }
   
+    const handleAddHouse = (item) => { 
+      const newHouses = houses.filter(   
+       (house) => item.objectID !== house.objectID
+    );
+    //updater function updates the stateful variable 
+    //called 'stories'. Since the state has changed
+    //(e.g an item was deleted), the App, List, Item
+    //components will re-render
+    setHouses(newHouses);
+  }
+
     const handleSearch = (event) => {
       setSearchTerm(event.target.value); 
     };
@@ -285,7 +296,7 @@ const App = () => {
 
      <hr/>
       
-     <HouseList list={searchedHouses} onRemoveItem={handleRemoveHouse}/>  
+     <HouseList list={searchedHouses} onRemoveHouse={handleRemoveHouse} />  
     </>
  )
 }
