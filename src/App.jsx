@@ -118,40 +118,77 @@ import Header from "./header";
 import HouseList from './house/houseList';
 import Search from './house/search';
 
-//Will move the houseArray from global scope into App Component
+/*
+      At the moment initialHouses is unstateful variable
+      To gain control over the list, lets make it stateful.
+      By using it as initial state in React's useState Hook. The 
+      returned values from the array are the current state (stories) 
+      and the state updater function (setStories):
+    */
 const initialHouses = [
     {
-      id: 1,
+      objectID: 1,
       address: "12 Valley of Kings, Geneva",
       country: "Switzerland",
       price: 900000,
     },
     {
-      id: 2,
+      objectID: 2,
       address: "89 Road of Forks, Bern",
       country: "Italy",
       price: 500000,
     },
     {
-      id: 3,
+      objectID: 3,
       address: "1053 Lake Side Drive",
       country: "Netherlands",
       price: 600500,
     },
     {
-      id: 4,
+      objectID: 4,
       address: "1916 Rustic Oak Road",
       country: "USA",
       price: 600900,
     },
     {
-      id: 5,
+      objectID: 5,
       address: "1256 Macapagal Road",
       country: "Philippines",
       price: 700900,
     },
   ];
 
+    /* The following  is a custom hook that will store the state in a 
+     local storage. useStorageState which will keep the component's 
+     state in sync with the browser's local storage.
+
+    This custom hook returns
+      1. state 
+      2. and a state updater function
+    and accepts an initial state as argument. 
+
+     This is the custom hook before it was refactored to make it generic:
+     const [searchTerm, setSearchTerm] = React.useState(''); 
+        1. searchTerm renamed to 'value'
+        2. setSearchTerm renamed to 'setValue'
+  */
+        const useStorageState = (key, initialState) => {
+          const [value, setValue] = React.useState(
+              localStorage.getItem('key') || initialState 
+          );
+          
+          React.useEffect(() => {
+            console.log('useEffect fired. Displaying value of dependency array ' + [ value, key]  );
+              localStorage.setItem(key, value);  
+              },
+              [value, key]   //Dependency array
+              ); //EOF useEffect
+          
+          //the returned values are returned as an array.
+          return [value, setValue]; 
+      
+        } //EOF create custom hook
+    
     /* Fetching data. We start off with a function that returns a 
      promise with data in its shorthand version once it resolves. 
      Even though the data should arrive asynchronously when we start the 
@@ -167,36 +204,6 @@ const initialHouses = [
        )
      );
 
-  /* The following  is a custom hook that will store the state in a 
-     local storage. useStorageState which will keep the component's 
-     state in sync with the browser's local storage.
-
-    This custom hook returns
-      1. state 
-      2. and a state updater function
-    and accepts an initial state as argument. 
-
-     This is the custom hook before it was refactored to make it generic:
-     const [searchTerm, setSearchTerm] = React.useState(''); 
-        1. searchTerm renamed to 'value'
-        2. setSearchTerm renamed to 'setValue'
-  */
-    const useStorageState = (key, initialState) => {
-      const [value, setValue] = React.useState(
-          localStorage.getItem('key') || initialState 
-      );
-      
-      React.useEffect(() => {
-        console.log('useEffect fired. Displaying value of dependency array ' + [ value, key]  );
-          localStorage.setItem(key, value);  
-          },
-          [value, key]   //Dependency array
-          ); //EOF useEffect
-      
-      //the returned values are returned as an array.
-      return [value, setValue]; 
-  
-    } //EOF create custom hook
      
 const App = () => {
 
@@ -214,12 +221,14 @@ const App = () => {
   console.log('Value assigned to search term is = ' + stateOfSearchComponent); 
   console.log('Value assigned tosetSearchTerm is = ' + setSearchTerm); 
 
-  /* Step 1: Since we haven't fetch the data yet, initialized the 
+  /* Step 1: Since we haven't fetch the data yet, initialize the 
     state with empty array and simulate fetching these stories async. */
     const [houses, setHouses] = React.useState([]);
 
-  /*Step 2: Add a new useEffect and call the function and resolve the
-   returned promise */
+  /*Step 2: RESOLVE THE PROMISE AS A SIDE-EFECT
+    We want to start off with an empty list of stories and simulate 
+    fetching these stories asynchronously. In a new useEFFECT hook, call the 
+    function and resolve the returned promise as a side-effect.*/
   React.useEffect(() => {
       //remember the first parameter to useEffect is a function
       getAsyncHouses().then(result => {
@@ -255,12 +264,10 @@ const App = () => {
       setSearchTerm(event.target.value); 
     };
 
+    //"houses" is the array of houses newly created by the filter() method.
     const searchedHouses = houses.filter((house) =>
       house.country.toLowerCase().includes(stateOfSearchComponent.toLowerCase())
      );
-    
-    
-    
 
   return (
     <>

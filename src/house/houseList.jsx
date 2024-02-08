@@ -56,7 +56,7 @@ console.log("SearchedHouses = " + mySearchHouses );
             //to HouseRow component as props. Pass the delete record 
             //handler "onRemoveItem" to HouseRow component.
             <HouseRow 
-                key={record.key} 
+                objectid={record.objectID} 
                 house={record}
                 onRemoveItem = {onRemoveItem} //contains the onRemoveItem handler
             />
