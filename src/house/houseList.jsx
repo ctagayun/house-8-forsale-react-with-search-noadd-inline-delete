@@ -26,61 +26,65 @@
 */
 
 import * as React from 'react';
-import HouseRow from './houserow';
+//import HouseRow, { HouseRowMemoized } from './houserow';
+import { HouseRowMemoized } from './houserow';
+const HouseList = ({list, onRemoveHouse, onAddHouse, setHouses}) =>
+    {
+      const mySearchHouses = JSON.stringify(list);
+      console.log("SearchedHouses = " + mySearchHouses );
+      const [counter, setCounter] = React.useState(0);
 
-//The child component receives a parameer ('props') as object
-const HouseList = ({list, onRemoveHouse}) => {
+      const addHouse = () => {
+        setHouses([
+          ...list, //searchHouses
+            {
+              objectID: 9,
+              address: "1456 Riverside Road",
+              country: "USA",
+              price: 25000000
+            },
+        ]);
+      };
 
-const mySearchHouses = JSON.stringify(list.searchedHouses);
-console.log("SearchedHouses = " + mySearchHouses );
-
- const addHouse = () => {
-   setHouses([
-     ...houses, //state
-      {
-        objectID: 9,
-        address: "1456 Riverside Road",
-        country: "USA",
-        price: 25000000
-      },
-   ]);
- };
-
- return (
-    <>
-      <div className="row mb-2">
-        <h5 className="themeFontColor text-center">
-          Houses currently on the market
-        </h5>
-      </div>
-      <table className="table table-hover">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Address</th>
-            <th>Country</th>
-            <th>Asking Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {list.map((record) => ( 
-            //first time in list has already been populated by useState
-            //Instantiate the HouseRow component and pass each record
-            //to HouseRow component as props. Pass the delete record 
-            //handler "onRemoveItem" to HouseRow component.
-            <HouseRow 
-                objectID={record.objectID} 
-                house={record}
-                onRemoveItem = {onRemoveHouse} //contains the onRemoveItem handler
-            />
-          ))}
-        </tbody>
-      </table>
-      <button className="btn btn-primary" onClick={addHouse}>
-        Add
-      </button>
-    </>
-  );
-};
+      return (
+          <>
+            <div className="row mb-2">
+              <h5 className="themeFontColor text-center">
+                Houses currently on the market
+              </h5>
+            </div>
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  
+                  <th>Address</th>
+                  <th>Country</th>
+                  <th>Asking Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {list.map((record) => ( 
+                  //first time in list has already been populated by useState
+                  //Instantiate the HouseRow component and pass each record
+                  //to HouseRow component as props. Pass the delete record 
+                  //handler "onRemoveItem" to HouseRow component.
+                  //<HouseRow - by using the memoized version only the 
+                  //added house will be rendered
+                  <HouseRowMemoized
+                      key={record.objectID}
+                      objectID={record.objectID} 
+                      house={record}
+                      onRemoveItem = {onRemoveHouse} //contains the onRemoveItem handler
+                      onAddHouse = {onAddHouse}
+                  />
+                ))}
+              </tbody>
+            </table>
+            <button className="btn btn-primary" onClick={addHouse}>
+              Add
+            </button>
+          </>
+        );
+  };
 
 export default HouseList;

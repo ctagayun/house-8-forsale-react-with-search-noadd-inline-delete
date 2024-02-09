@@ -1,4 +1,5 @@
 
+import * as React from 'react';
 import currencyFormatter from "../helpers/currencyFormatter";
 
 //Create another component that will display list of houses.
@@ -20,7 +21,7 @@ import currencyFormatter from "../helpers/currencyFormatter";
   */
 const HouseRow = ({house, onRemoveItem }) => (
     <tr>
-     <td>{house.objectID}</td>
+     <td>{house.objectID} </td>
      <td>{house.address}</td>
      <td>{house.country}</td>
      <td>{currencyFormatter.format(house.price)}</td>
@@ -34,5 +35,13 @@ const HouseRow = ({house, onRemoveItem }) => (
     </tr>
   
 );
-  
+
+//Memoizing is way to cache the output of JSX component 
+//so that it doesn't re-render. It is done by wrapping the 
+//component with React.memo hook
+const HouseRowMemoized = React.memo(HouseRow)
+
 export default HouseRow;
+//exporting the memoized version will let you use that 
+//version in the HouseList
+export {HouseRowMemoized}; 

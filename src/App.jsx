@@ -32,6 +32,10 @@ which allows its users to remove the item from the list.
       - Use useEffect Hook to trigger the desired side-effect each time 
      the searchTerm changes:
 
+      - Use effect automatically runs after React completes running
+      the component pure functions and the browser has been updated.
+      In the function the "EFFECT" is performed. So we can fetch data
+      from an API for example.
  ==============================================================
  Previous Task: React Controlled Components Task:
     - we modified the Search component. We added the value attribute
@@ -293,7 +297,10 @@ const App = () => {
        <strong>Search with 2 sec delay:</strong>
       </Search>
       <br></br>
-     <HouseList list={searchedHouses} onRemoveHouse={handleRemoveHouse} />  
+     <HouseList list={searchedHouses} 
+                onRemoveHouse={handleRemoveHouse} 
+                onAddHouse={handleAddHouse} 
+                setHouses = {setHouses}/>  
     </>
  )
 }
